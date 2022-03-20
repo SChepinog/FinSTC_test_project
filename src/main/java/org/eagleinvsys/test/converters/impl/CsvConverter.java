@@ -2,10 +2,12 @@ package org.eagleinvsys.test.converters.impl;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.eagleinvsys.test.converters.Converter;
 import org.eagleinvsys.test.converters.ConvertibleCollection;
@@ -14,6 +16,7 @@ import org.eagleinvsys.test.converters.ConvertibleMessage;
 public class CsvConverter implements Converter {
     private final String separator = ",";
     private final boolean needHeaders = true;
+    private final Charset charset = StandardCharsets.UTF_8;
 
     /**
      * Converts given {@link ConvertibleCollection} to CSV and outputs result as a text to the provided {@link OutputStream}
@@ -23,25 +26,30 @@ public class CsvConverter implements Converter {
      */
     @Override
     public void convert(ConvertibleCollection collectionToConvert, OutputStream outputStream) {
+        if (collectionToConvert == null) {
+            collectionToConvert = new CsvCollection(Collections.emptyList());
+        }
         Collection<String> headers = collectionToConvert.getHeaders();
         StringBuilder fileBuilder = new StringBuilder();
         if (needHeaders) {
             fileBuilder.append(collectionToString(headers, false));
         }
-        collectionToConvert.getRecords().forEach(record -> {
-            fileBuilder.append(recordToString(headers, record));
-        });
+        collectionToConvert.getRecords()
+            .forEach(record -> fileBuilder.append(recordToString(headers, record)));
         try {
-            outputStream.write(fileBuilder.toString().getBytes(StandardCharsets.UTF_8));
+            outputStream.write(fileBuilder.toString().getBytes(charset));
         } catch (IOException e) {
             e.printStackTrace();
             throw new IllegalStateException("Cannot write result to output stream");
         }
     }
 
-    private String recordToString(Collection<String> headers, ConvertibleMessage record) {
-        List<String> collect = headers.stream().map(record::getElement).collect(Collectors.toList());
-        return collectionToString(collect, true);
+    private String recordToString(Iterable<String> headers, ConvertibleMessage record) {
+        List<String> recordAsList = new ArrayList<>();
+        for (String header : headers) {
+            recordAsList.add(record.getElement(header));
+        }
+        return collectionToString(recordAsList, true);
     }
 
     private String collectionToString(Iterable<String> strings, boolean needNewString) {
@@ -49,8 +57,10 @@ public class CsvConverter implements Converter {
         if (needNewString) {
             builder.append("\n");
         }
-        if (strings != null) { //TODO what to do with null, "null" and ""
-            builder.append(String.join(separator, strings));
+        if (strings != null) {
+            builder.append(
+                String.join(separator, strings).replaceAll("\n", "")
+            );
         }
         return builder.toString();
     }
