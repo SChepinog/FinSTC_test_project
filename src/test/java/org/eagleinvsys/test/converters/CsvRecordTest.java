@@ -11,15 +11,16 @@ import org.junit.jupiter.api.Test;
 public class CsvRecordTest {
 
     @Test
-    public void recordCannotBeNull() {
-        Assertions.assertThrows(
-            IllegalArgumentException.class,
-            () -> new CsvRecord(null)
+    public void recordCanBeNull() {
+        CsvRecord record = new CsvRecord(null);
+        Assertions.assertAll(
+            () -> Assertions.assertNull(record.getElement("test")),
+            () -> Assertions.assertNull(record.getElement(null))
         );
     }
 
     @Test
-    public void emptyRecordTest() {
+    public void emptyRecord() {
         CsvRecord record = new CsvRecord(Collections.emptyMap());
         Assertions.assertAll(
             () -> Assertions.assertNull(record.getElement("test")),
