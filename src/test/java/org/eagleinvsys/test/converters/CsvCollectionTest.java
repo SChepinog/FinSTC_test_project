@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eagleinvsys.test.converters.impl.CsvCollection;
+import org.eagleinvsys.util.Utils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -32,9 +33,7 @@ public class CsvCollectionTest {
 
     @Test
     public void countRecordsTest() {
-        Map<String, String> testMap = new HashMap<>();
-        testMap.put("1", "111");
-        testMap.put("2", "222");
+        Map<String, String> testMap = Utils.generateMapForKeys("1", "2");
         List<Map<String, String>> testList = Arrays.asList(testMap, testMap, null, new HashMap<>());
         CsvCollection testCollection = new CsvCollection(testList);
 

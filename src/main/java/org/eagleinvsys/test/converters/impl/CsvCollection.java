@@ -1,6 +1,7 @@
 package org.eagleinvsys.test.converters.impl;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -20,16 +21,20 @@ public class CsvCollection implements ConvertibleCollection {
         this.records = getAllRecords(rawData);
     }
 
-    private Set<String> getAllKeysSet(List<Map<String, String>> notNullRawData) {
+    private Set<String> getAllKeysSet(List<Map<String, String>> rawData) {
         Set<String> keySet = new HashSet<>();
-        notNullRawData.stream()
-            .filter(Objects::nonNull)
-            .forEach(record -> keySet.addAll(record.keySet()));
+        if (rawData != null) {
+            rawData.stream()
+                .filter(Objects::nonNull)
+                .forEach(record -> keySet.addAll(record.keySet()));
+        }
         return keySet;
     }
 
-    private List<ConvertibleMessage> getAllRecords(List<Map<String, String>> notNullRawData) {
-        return notNullRawData.stream()
+    private List<ConvertibleMessage> getAllRecords(List<Map<String, String>> rawData) {
+        return rawData == null
+            ? Collections.emptyList()
+            : rawData.stream()
             .map(CsvRecord::new)
             .collect(Collectors.toList());
     }
