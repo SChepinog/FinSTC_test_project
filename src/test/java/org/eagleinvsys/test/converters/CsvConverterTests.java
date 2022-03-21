@@ -91,4 +91,20 @@ class CsvConverterTests {
             Utils.outputStreamToString(outputStream)
         );
     }
+
+    @Test
+    public void recordsWithNewLines() {
+        Map<String, String> testMap = new HashMap<>();
+        testMap.put("1\n", "111");
+        testMap.put("2", "22\n2");
+        testMap.put("3", "333");
+        List<Map<String, String>> data = Collections.singletonList(testMap);
+        ConvertibleCollection convertibleMessage = new CsvCollection(data);
+
+        csvConverter.convert(convertibleMessage, outputStream);
+        Assertions.assertEquals(
+            "2,3,1\n222,333,111",
+            Utils.outputStreamToString(outputStream)
+        );
+    }
 }
