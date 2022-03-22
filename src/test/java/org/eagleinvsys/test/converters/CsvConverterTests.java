@@ -16,12 +16,13 @@ import org.junit.jupiter.api.Test;
 
 class CsvConverterTests {
 
-    CsvConverter csvConverter = new CsvConverter();
+    CsvConverter csvConverter;
     ByteArrayOutputStream outputStream;
 
     @BeforeEach
     public void refreshOutputStream() {
         outputStream = new ByteArrayOutputStream();
+        csvConverter = new CsvConverter();
     }
 
     @Test

@@ -14,9 +14,9 @@ import org.eagleinvsys.test.converters.ConvertibleCollection;
 import org.eagleinvsys.test.converters.ConvertibleMessage;
 
 public class CsvConverter implements Converter {
-    private final String separator = ",";
-    private final boolean needHeaders = true;
-    private final Charset charset = StandardCharsets.UTF_8;
+    private String separator = ",";
+    private boolean needHeaders = true;
+    private Charset charset = StandardCharsets.UTF_8;
 
     /**
      * Converts given {@link ConvertibleCollection} to CSV and outputs result as a text to the provided {@link OutputStream}
@@ -63,5 +63,32 @@ public class CsvConverter implements Converter {
             );
         }
         return builder.toString();
+    }
+
+    public String getSeparator() {
+        return separator;
+    }
+
+    public CsvConverter setSeparator(String separator) {
+        this.separator = separator;
+        return this;
+    }
+
+    public boolean isNeedHeaders() {
+        return needHeaders;
+    }
+
+    public CsvConverter setNeedHeaders(boolean needHeaders) {
+        this.needHeaders = needHeaders;
+        return this;
+    }
+
+    public Charset getCharset() {
+        return charset;
+    }
+
+    public CsvConverter setCharset(Charset charset) {
+        this.charset = charset;
+        return this;
     }
 }
