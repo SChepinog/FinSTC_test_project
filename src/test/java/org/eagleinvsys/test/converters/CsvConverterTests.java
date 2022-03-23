@@ -16,8 +16,8 @@ import org.junit.jupiter.api.Test;
 
 class CsvConverterTests {
 
-    CsvConverter csvConverter;
-    ByteArrayOutputStream outputStream;
+    private CsvConverter csvConverter;
+    private ByteArrayOutputStream outputStream;
 
     @BeforeEach
     public void refreshOutputStream() {

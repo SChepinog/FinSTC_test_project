@@ -16,11 +16,12 @@ import org.junit.jupiter.api.Test;
 
 class StandardCsvConverterTests {
 
-    StandardCsvConverter standardCsvConverter = new StandardCsvConverter(new CsvConverter());
-    ByteArrayOutputStream outputStream;
+    private StandardCsvConverter standardCsvConverter;
+    private ByteArrayOutputStream outputStream;
 
     @BeforeEach
     public void refreshOutputStream() {
+        standardCsvConverter = new StandardCsvConverter(new CsvConverter());
         outputStream = new ByteArrayOutputStream();
     }
 
