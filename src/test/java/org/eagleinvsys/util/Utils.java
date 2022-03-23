@@ -1,6 +1,7 @@
 package org.eagleinvsys.util;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -14,7 +15,11 @@ import org.apache.commons.lang3.tuple.Pair;
 public class Utils {
 
     public static String outputStreamToString(ByteArrayOutputStream outputStream) {
-        return new String(outputStream.toByteArray(), StandardCharsets.UTF_8);
+        return outputStreamToString(outputStream, StandardCharsets.UTF_8);
+    }
+
+    public static String outputStreamToString(ByteArrayOutputStream outputStream, Charset charset) {
+        return new String(outputStream.toByteArray(), charset);
     }
 
     public static Map<String, String> generateMapForKeys(String... keys) {

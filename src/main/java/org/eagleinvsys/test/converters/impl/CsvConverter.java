@@ -26,30 +26,52 @@ public class CsvConverter implements Converter {
      */
     @Override
     public void convert(ConvertibleCollection collectionToConvert, OutputStream outputStream) {
+        collectionToConvert = handleNullCase(collectionToConvert);
+        StringBuilder resultBuilder = new StringBuilder();
+
+        Collection<String> headers = collectionToConvert.getHeaders();
+        addHeaders(headers, resultBuilder);
+        addRecords(collectionToConvert, headers, resultBuilder);
+        writeResultToStream(outputStream, resultBuilder);
+    }
+
+    private ConvertibleCollection handleNullCase(ConvertibleCollection collectionToConvert) {
         if (collectionToConvert == null) {
             collectionToConvert = new CsvCollection(Collections.emptyList());
         }
-        Collection<String> headers = collectionToConvert.getHeaders();
-        StringBuilder fileBuilder = new StringBuilder();
+        return collectionToConvert;
+    }
+
+    private void addHeaders(Collection<String> headers, StringBuilder builder) {
         if (needHeaders) {
-            fileBuilder.append(collectionToString(headers, false));
+            builder.append(collectionToString(headers, false));
         }
-        collectionToConvert.getRecords()
-            .forEach(record -> fileBuilder.append(recordToString(headers, record)));
+    }
+
+    private void addRecords(ConvertibleCollection collectionToConvert, Collection<String> headers, StringBuilder builder) {
+        boolean isFirstRecord = true;
+        for (ConvertibleMessage record : collectionToConvert.getRecords()) {
+            boolean needNewLineBeforeString = needHeaders || !isFirstRecord;
+            builder.append(recordToString(headers, record, needNewLineBeforeString));
+            isFirstRecord = false;
+        }
+    }
+
+    private void writeResultToStream(OutputStream outputStream, StringBuilder builder) {
         try {
-            outputStream.write(fileBuilder.toString().getBytes(charset));
+            outputStream.write(builder.toString().getBytes(charset));
         } catch (IOException e) {
             e.printStackTrace();
             throw new IllegalStateException("Cannot write result to output stream");
         }
     }
 
-    private String recordToString(Iterable<String> headers, ConvertibleMessage record) {
+    private String recordToString(Iterable<String> headers, ConvertibleMessage record, boolean needNewSting) {
         List<String> recordAsList = new ArrayList<>();
         for (String header : headers) {
             recordAsList.add(record.getElement(header));
         }
-        return collectionToString(recordAsList, true);
+        return collectionToString(recordAsList, needNewSting);
     }
 
     private String collectionToString(Iterable<String> strings, boolean needNewString) {
@@ -65,26 +87,14 @@ public class CsvConverter implements Converter {
         return builder.toString();
     }
 
-    public String getSeparator() {
-        return separator;
-    }
-
     public CsvConverter setSeparator(String separator) {
         this.separator = separator;
         return this;
     }
 
-    public boolean isNeedHeaders() {
-        return needHeaders;
-    }
-
     public CsvConverter setNeedHeaders(boolean needHeaders) {
         this.needHeaders = needHeaders;
         return this;
-    }
-
-    public Charset getCharset() {
-        return charset;
     }
 
     public CsvConverter setCharset(Charset charset) {
